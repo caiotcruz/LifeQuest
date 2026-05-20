@@ -1,0 +1,101 @@
+version: '3.9'
+
+services:
+
+  # ─────────────────────────────────────────────
+  # PostgreSQL — Banco de Dados Principal
+  # ─────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: lifequest_postgres
+    environment:
+      POSTGRES_DB: lifequest
+      POSTGRES_USER: lifequest_user
+      POSTGRES_PASSWORD: lifequest_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lifequest_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lifequest_user -d lifequest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # Redis — Cache, Sessões e Streaks
+  # ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: lifequest_redis
+    command: redis-server --requirepass lifequest_redis_pass --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - lifequest_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "lifequest_redis_pass", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # Backend — Spring Boot 3
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lifequest_backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: lifequest
+      DB_USER: lifequest_user
+      DB_PASS: lifequest_pass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASS: lifequest_redis_pass
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production_minimum_256_bits}
+      JWT_EXPIRATION_MS: 86400000
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - lifequest_network
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # PgAdmin — Interface visual para PostgreSQL (dev only)
+  # ─────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: lifequest_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@lifequest.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    networks:
+      - lifequest_network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  lifequest_network:
+    driver: bridge

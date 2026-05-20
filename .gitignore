@@ -1,0 +1,40 @@
+# ─── MAVEN / BUILD ───────────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.properties
+*.class
+*.mars
+*.db
+*.log
+
+# ─── IDE — VS CODE ───────────────────────────────────────────
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# ─── IDE — INTELLIJ ──────────────────────────────────────────
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# ─── OPERATING SYSTEM (WINDOWS) ──────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── DOCKER & DATA (CRÍTICO) ──────────────────────────────────
+.docker/
+# Ignorar pastas locais onde os volumes do banco de dados salvam dados persistentes fora do container
+pgadmin_data/
+postgres_data/
+redis_data/
+
+# ─── CONFIGURAÇÕES E CHAVES SECRETAS ─────────────────────────
+.env
+*.local

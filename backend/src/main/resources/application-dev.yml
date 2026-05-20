@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lifequest
+    username: lifequest_user
+    password: lifequest_pass
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: lifequest_redis_pass
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          min-idle: 2
+
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    "[com.lifequest]": DEBUG
+    "[org.springframework.security]": DEBUG
