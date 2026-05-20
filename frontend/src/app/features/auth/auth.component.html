@@ -14,7 +14,8 @@
     <div class="auth-card">
       <h2>{{ isLoginMode() ? 'Iniciar Sessão' : 'Criar Personagem' }}</h2>
       
-      <form [formGroup].="authForm" (ngSubmit)="onSubmit()">
+      <!-- 👈 AQUI: O ponto foi removido do [formGroup] -->
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
         
         <!-- Feedback de Erro do Servidor -->
         <div class="error-toast" *ngIf="errorMessage()">

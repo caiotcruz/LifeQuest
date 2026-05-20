@@ -3,7 +3,9 @@ package com.lifequest.security;
 import com.lifequest.domain.User;
 import com.lifequest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +17,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Atualizado para usar o método corrigido com parâmetro único do Passo 2
-        User user = userRepository.findByEmailOrUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException(
-                "Usuário não encontrado com o identificador: " + username));
+    public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
+        // Permite o login tanto por e-mail quanto pelo nome do personagem
+        User user = userRepository.findByEmail(emailOrUsername)
+            .orElseGet(() -> userRepository.findByUsername(emailOrUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("Herói não encontrado com a credencial fornecida: " + emailOrUsername)));
 
-        // Retorna o nosso custom UserPrincipal contendo o ID
-        return UserPrincipal.create(user);
+        return UserPrincipal.from(user);
     }
 }

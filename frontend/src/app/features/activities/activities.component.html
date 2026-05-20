@@ -5,7 +5,7 @@
     <div class="daily-summary-card">
       <div class="summary-info">
         <h3>Missões de Hoje</h3>
-        <p>{{ completedToday().length }} concluidas</p>
+        <p>{{ completedCount() }} concluídas</p>
       </div>
       <div class="summary-icon-box">
         <ion-icon name="checkbox-outline"></ion-icon>
@@ -28,10 +28,11 @@
         </div>
 
         <div class="activities-list">
+          <!-- Busca dinamicamente filtrando pela categoria do laço principal -->
           <div class="activity-row" 
                *ngFor="let act of getActivitiesByCategory(cat.id)"
                [class.completed]="isCompleted(act.id)"
-               (click)="onComplete(act)">
+               (click)="completeActivity(act)">
             
             <div class="activity-details">
               <h5>{{ act.title }}</h5>

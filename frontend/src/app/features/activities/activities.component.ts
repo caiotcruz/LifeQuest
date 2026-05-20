@@ -1,9 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { checkboxOutline, checkmarkCircle, addCircleOutline, barbellOutline, bookOutline, briefcaseOutline, personOutline, colorPaletteOutline } from 'ionicons/icons';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Activity, UserActivity, ActivityCategory } from '../../core/models/models';
+import { ToastService } from '../../core/services/toast.service';
+import { Activity, UserActivity, CompleteActivityRequest, ActivityCompletionResult } from '../../core/models/models';
 
 @Component({
   selector: 'app-activities',
@@ -15,74 +18,114 @@ import { Activity, UserActivity, ActivityCategory } from '../../core/models/mode
 export class ActivitiesComponent implements OnInit {
   private activityService = inject(ActivityService);
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
 
-  // Estados locais reativos
-  predefinedActivities = signal<Activity[]>([]);
-  completedToday = signal<UserActivity[]>([]);
-  isLoading = signal(true);
-
-  // Categorias para agrupamento na UI
-  categories: { id: ActivityCategory; label: string; icon: string }[] = [
-    { id: 'HEALTH', label: 'Saúde e Fitness', icon: 'dumbbell-outline' },
-    { id: 'STUDY', label: 'Estudos e Códigos', icon: 'code-working-outline' },
-    { id: 'WORK', label: 'Trabalho e Projetos', icon: 'rocket-outline' },
-    { id: 'PERSONAL_DEVELOPMENT', label: 'Evolução Pessoal', icon: 'brain-outline' },
-    { id: 'CREATIVITY', label: 'Criatividade', icon: 'color-palette-outline' }
+  // Lista estática de apoio para o layout renderizar os blocos por categoria
+  categories = [
+    { id: 'HEALTH', label: 'Saúde & Fitness', icon: 'barbell-outline' },
+    { id: 'STUDY', label: 'Estudos & Aprendizado', icon: 'book-outline' },
+    { id: 'WORK', label: 'Trabalho & Foco', icon: 'briefcase-outline' },
+    { id: 'PERSONAL_DEVELOPMENT', label: 'Desenvolvimento Pessoal', icon: 'person-outline' },
+    { id: 'CREATIVITY', label: 'Criatividade & Hobbies', icon: 'color-palette-outline' }
   ];
 
-  ngOnInit() {
-    this.loadData();
+  // Estados locais reativos (Signals)
+  activities = signal<Activity[]>([]);
+  completedTodayIds = signal<Set<number>>(new Set<number>());
+  isLoading = signal<boolean>(false);
+
+  // Calcula dinamicamente a quantidade de missões feitas hoje para mostrar no painel superior
+  completedCount = computed(() => this.completedTodayIds().size);
+
+  constructor() {
+    // Registra os ícones do Ionic que serão desenhados na tela
+    addIcons({ 
+      checkboxOutline, checkmarkCircle, addCircleOutline, 
+      barbellOutline, bookOutline, briefcaseOutline, 
+      personOutline, colorPaletteOutline 
+    });
   }
 
-  loadData() {
+  ngOnInit(): void {
+    this.loadDailyQuests();
+  }
+
+  loadDailyQuests(): void {
     this.isLoading.set(true);
     
-    // Busca o catálogo de atividades pré-definidas
-    this.activityService.getPredefinedActivities().subscribe({
-      next: (list) => this.predefinedActivities.set(list),
-      error: (err) => console.error('Erro ao listar atividades', err)
-    });
-
-    // Busca o que o usuário já concluiu no dia de hoje
     this.activityService.getTodayActivities().subscribe({
-      next: (logs) => {
-        this.completedToday.set(logs);
-        this.isLoading.set(false);
+      next: (data: UserActivity[]) => {
+        const completedIds = new Set<number>(
+          data.filter(ua => ua.completedAt !== null && ua.completedAt !== undefined).map(ua => ua.activity.id)
+        );
+        this.completedTodayIds.set(completedIds);
+        
+        this.activityService.getPredefinedActivities().subscribe({
+          next: (all: Activity[]) => {
+            this.activities.set(all);
+            this.isLoading.set(false);
+          },
+          error: () => {
+            this.toast.error('Erro ao processar catálogo de missões.');
+            this.isLoading.set(false);
+          }
+        });
       },
-      error: (err) => {
-        console.error('Erro ao buscar histórico diário', err);
+      error: () => {
+        this.toast.error('Não foi possível carregar o quadro de missões.');
         this.isLoading.set(false);
       }
     });
   }
 
-  getActivitiesByCategory(cat: ActivityCategory): Activity[] {
-    return this.predefinedActivities().filter(a => a.category === cat);
+  // Métodos auxiliares de leitura chamados diretamente pelo HTML
+  getActivitiesByCategory(categoryId: string): Activity[] {
+    return this.activities().filter(act => act.category === categoryId);
   }
 
   isCompleted(activityId: number): boolean {
-    return this.completedToday().some(log => log.activity.id === activityId);
+    return this.completedTodayIds().has(activityId);
   }
 
-  onComplete(activity: Activity) {
+  completeActivity(activity: Activity): void {
     if (this.isCompleted(activity.id)) return;
 
-    this.activityService.completeActivity({ activityId: activity.id }).subscribe({
-      next: (result) => {
-        // Atualiza instantaneamente os Signals globais do herói (Level, XP, Streak)
+    const request: CompleteActivityRequest = { activityId: activity.id };
+
+    this.activityService.completeActivity(request).subscribe({
+      next: async (result: ActivityCompletionResult) => {
+        await this.toast.xpGained(result.xpEarned, result.activityTitle);
+
         this.authService.updateUser({
           totalXp: result.levelUpResult.totalXp,
           level: result.levelUpResult.newLevel,
           currentStreak: result.currentStreak
         });
 
-        // Alerta visual de ganho de XP (Efeito psicológico de recompensa)
-        console.log(`Missão cumprida: ${result.activityTitle}! +${result.xpEarned} XP`);
-        
-        // Recarrega os logs para travar o check de concluído na UI
-        this.loadData();
+        if (result.levelUpResult.leveledUp) {
+          await this.toast.levelUp(result.levelUpResult.newLevel);
+        }
+
+        if (result.newBadgesEarned && result.newBadgesEarned.length > 0) {
+          for (const badge of result.newBadgesEarned) {
+            await this.toast.badgeEarned(badge.title);
+          }
+        }
+
+        if (result.currentStreak > 0) {
+          await this.toast.streakUpdated(result.currentStreak);
+        }
+
+        this.completedTodayIds.update(set => {
+          const newSet = new Set(set);
+          newSet.add(activity.id);
+          return newSet;
+        });
       },
-      error: (err) => console.error('Falha ao registrar conclusão de missão', err)
+      error: (err: any) => {
+        const errorMsg = err.error?.message || 'Falha ao registrar atividade na guilda.';
+        this.toast.error(errorMsg);
+      }
     });
   }
 }

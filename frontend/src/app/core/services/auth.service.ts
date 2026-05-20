@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
-import { AuthResponse, LoginRequest, RegisterRequest, UserSummary } from '../models/models';
+import { AuthResponse, LoginRequest, RegisterRequest, UserSummary, UserProfileResponse } from '../models/models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -20,10 +20,23 @@ export class AuthService {
   readonly xp = computed(() => this._currentUser()?.totalXp ?? 0);
 
   private readonly API = `${environment.apiUrl}/auth`;
+  private readonly ME_API = `${environment.apiUrl}/me`; // 👈 Rota base para o UserController do Java
 
   constructor(private http: HttpClient, private router: Router) {
     this.loadPersistedUser();
   }
+
+  // ── Rotas de Perfil (Profile) ───────────────────────────
+
+  getProfile(): Observable<UserProfileResponse> {
+    return this.http.get<UserProfileResponse>(`${this.ME_API}/profile`);
+  }
+
+  updateProfile(request: { username?: string; avatar?: string }): Observable<UserProfileResponse> {
+    return this.http.put<UserProfileResponse>(`${this.ME_API}/profile`, request);
+  }
+
+  // ── Rotas de Autenticação ───────────────────────────────
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     this._isLoading.set(true);
@@ -51,7 +64,7 @@ export class AuthService {
     await Preferences.remove({ key: 'token' });
     await Preferences.remove({ key: 'user' });
     this._currentUser.set(null);
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/auth']); // Ajustado para a rota correta do app.routes.ts
   }
 
   async getToken(): Promise<string | null> {

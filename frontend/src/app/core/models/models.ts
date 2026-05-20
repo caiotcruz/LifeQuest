@@ -95,3 +95,16 @@ export interface ScheduleRequest {
   startDate: string;
   endDate?: string;
 }
+
+export interface UserProfileResponse {
+  id: number;
+  username: string;
+  email: string;
+  avatar?: string;
+  level: number;
+  totalXp: number;
+  currentStreak: number;
+  longestStreak: number;
+  createdAt: string;
+  badges: any[];
+}

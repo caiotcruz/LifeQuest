@@ -77,7 +77,7 @@ export class AuthComponent {
         emailOrUsername: this.authForm.value.emailOrUsername,
         password: this.authForm.value.password
       }).subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => this.router.navigate(['/tabs/dashboard']), // 👈 Ajustado para a malha de abas
         error: (err) => this.errorMessage.set(err.error?.message || 'Credenciais inválidas.')
       });
     } else {
@@ -86,7 +86,7 @@ export class AuthComponent {
         email: this.authForm.value.email,
         password: this.authForm.value.password
       }).subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => this.router.navigate(['/tabs/dashboard']), // 👈 Ajustado para a malha de abas
         error: (err) => this.errorMessage.set(err.error?.message || 'Falha ao registrar conta.')
       });
     }

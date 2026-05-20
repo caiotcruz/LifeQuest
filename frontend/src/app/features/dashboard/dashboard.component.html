@@ -1,40 +1,36 @@
 <ion-content class="dashboard-content">
   <div class="dashboard-container">
 
-    <!-- ─── HUD DE STATUS DO PERSONAGEM ─── -->
     <div class="character-hud">
       <div class="hud-header">
         <div class="user-info">
-          <h2>{{ authService.currentUser()?.username || 'Viajante' }}</h2>
-          <span class="class-title">Nível {{ authService.level() }}</span>
+          <h2>{{ currentUser()?.username || 'Viajante' }}</h2>
+          <span class="class-title">Herói da Guilda</span>
         </div>
         
-        <!-- Contador de Streak Em Chamas -->
-        <div class="streak-badge" [class.active]="authService.streak() > 0">
+        <div class="streak-badge" [class.active]="(currentUser()?.currentStreak || 0) > 0">
           <ion-icon name="flame"></ion-icon>
-          <span>{{ authService.streak() }} Dias</span>
+          <span>{{ currentUser()?.currentStreak || 0 }} Dias</span>
         </div>
       </div>
 
-      <!-- Barra de Progresso de Experiência (XP) -->
       <div class="xp-bar-container">
-        <div class="xp-labels">
-          <span>Progresso Geral</span>
-          <span>{{ authService.xp() }} XP acumulados</span>
-        </div>
-        <div class="xp-track">
-          <!-- TODO: No MVP V2 usaremos a meta dinâmica do XpLevelConfig para o preenchimento em % -->
-          <div class="xp-fill" style="width: 45%;"></div>
+        <app-xp-progress 
+          [level]="level()" 
+          [progressXp]="progressXp()" 
+          [nextLevelXp]="nextLevelXpThreshold()">
+        </app-xp-progress>
+        
+        <div class="xp-total-info">
+          <span>Total Acumulado: {{ totalXp() }} XP</span>
         </div>
       </div>
     </div>
 
-    <!-- ─── GRADE DE MÉTRICAS DE RETENÇÃO ─── -->
     <h3 class="section-title">Estatísticas de Evolução</h3>
 
     <div class="stats-grid" *ngIf="!isLoadingStats(); else loadingState">
       
-      <!-- Cartão: Categoria Dominante -->
       <div class="stat-card dominant">
         <div class="card-icon">
           <ion-icon name="sparkles-outline"></ion-icon>
@@ -45,7 +41,6 @@
         </div>
       </div>
 
-      <!-- Cartão: Dias Ativos no Mês -->
       <div class="stat-card active-days">
         <div class="card-icon">
           <ion-icon name="calendar-clear-outline"></ion-icon>
@@ -56,7 +51,6 @@
         </div>
       </div>
 
-      <!-- Cartão: XP Semanal -->
       <div class="stat-card card-xp">
         <div class="card-icon">
           <ion-icon name="trending-up-outline"></ion-icon>
@@ -67,7 +61,6 @@
         </div>
       </div>
 
-      <!-- Cartão: Hora Mais Produtiva -->
       <div class="stat-card production-hour">
         <div class="card-icon">
           <ion-icon name="time-outline"></ion-icon>
@@ -80,7 +73,6 @@
 
     </div>
 
-    <!-- Feedback Visual de Carregamento -->
     <ng-template #loadingState>
       <div class="loading-container">
         <ion-spinner name="crescent"></ion-spinner>

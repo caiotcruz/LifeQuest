@@ -1,0 +1,97 @@
+<ion-content class="profile-content ion-padding">
+  
+  <div class="loading-state" *ngIf="isLoading() && !profileData()">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Invocando registros do herói...</p>
+  </div>
+
+  <div class="profile-container" *ngIf="profileData()">
+    
+    <!-- ─── HEADER DE IDENTIDADE ─── -->
+    <div class="profile-header ion-text-center">
+      <ion-avatar class="hero-avatar">
+        <!-- Avatar genérico por enquanto -->
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-avatar>
+
+      <!-- Modo de Visualização -->
+      <div class="username-display" *ngIf="!isEditing()">
+        <h2>{{ profileData()?.username }}</h2>
+        <ion-button fill="clear" size="small" (click)="toggleEditMode()">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Modo de Edição -->
+      <div class="username-edit" *ngIf="isEditing()">
+        <ion-input 
+          [(ngModel)]="editModel.username" 
+          placeholder="Novo nome" 
+          [disabled]="isLoading()">
+        </ion-input>
+        <div class="edit-actions">
+          <ion-button fill="clear" color="medium" (click)="toggleEditMode()" [disabled]="isLoading()">Cancelar</ion-button>
+          <ion-button fill="solid" color="primary" (click)="saveProfile()" [disabled]="isLoading()">Salvar</ion-button>
+        </div>
+      </div>
+
+      <p class="hero-email">{{ profileData()?.email }}</p>
+      <ion-chip color="warning">Nível {{ profileData()?.level }}</ion-chip>
+    </div>
+
+    <!-- ─── STATUS HISTÓRICO ─── -->
+    <ion-list class="stats-list" lines="none">
+      <ion-list-header>
+        <ion-label>Histórico de Aventuras</ion-label>
+      </ion-list-header>
+
+      <ion-item>
+        <ion-icon slot="start" name="flame" color="danger"></ion-icon>
+        <ion-label>
+          <h2>Maior Sequência (Streak)</h2>
+          <p>O seu recorde de constância</p>
+        </ion-label>
+        <ion-badge slot="end" color="light">{{ profileData()?.longestStreak }} Dias</ion-badge>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon slot="start" name="calendar-clear-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h2>Membro da Guilda desde</h2>
+        </ion-label>
+        <ion-note slot="end">{{ profileData()?.createdAt | date:'dd/MM/yyyy' }}</ion-note>
+      </ion-item>
+    </ion-list>
+
+    <!-- ─── VITRINE DE CONQUISTAS (BADGES) ─── -->
+    <div class="badges-section ion-margin-top">
+      <h3 class="section-title">
+        <ion-icon name="trophy-outline"></ion-icon>
+        Vitrine de Conquistas
+      </h3>
+      
+      <div class="empty-badges" *ngIf="profileData()?.badges?.length === 0">
+        <p>Complete missões consistentes para desbloquear emblemas e títulos únicos.</p>
+      </div>
+
+      <div class="badges-grid" *ngIf="profileData()?.badges?.length! > 0">
+        <!-- Renderiza os badges retornados da API -->
+        <div class="badge-card" *ngFor="let badge of profileData()?.badges">
+          <img [src]="badge.iconUrl" [alt]="badge.title" class="badge-icon" *ngIf="badge.iconUrl" />
+          <div class="badge-fallback" *ngIf="!badge.iconUrl">🏆</div>
+          <h4>{{ badge.title }}</h4>
+          <p>{{ badge.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ZONA DE PERIGO / LOGOUT ─── -->
+    <div class="danger-zone ion-margin-top">
+      <ion-button expand="block" color="medium" fill="outline" (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Sair do Acampamento
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>
