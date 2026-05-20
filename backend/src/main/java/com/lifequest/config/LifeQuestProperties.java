@@ -1,22 +1,21 @@
 package com.lifequest.config;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
-@Setter
-@Component
+@Data
+@Component 
 @ConfigurationProperties(prefix = "lifequest")
 public class LifeQuestProperties {
-
-    private final Jwt jwt = new Jwt();
-    private final Xp xp = new Xp();
-    private final Streak streak = new Streak();
+    
+    private Jwt jwt = new Jwt();
+    private Xp xp = new Xp();
+    private Streak streak = new Streak();
 
     @Getter
     @Setter

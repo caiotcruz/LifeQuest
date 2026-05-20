@@ -1,0 +1,92 @@
+<ion-content class="dashboard-content">
+  <div class="dashboard-container">
+
+    <!-- ─── HUD DE STATUS DO PERSONAGEM ─── -->
+    <div class="character-hud">
+      <div class="hud-header">
+        <div class="user-info">
+          <h2>{{ authService.currentUser()?.username || 'Viajante' }}</h2>
+          <span class="class-title">Nível {{ authService.level() }}</span>
+        </div>
+        
+        <!-- Contador de Streak Em Chamas -->
+        <div class="streak-badge" [class.active]="authService.streak() > 0">
+          <ion-icon name="flame"></ion-icon>
+          <span>{{ authService.streak() }} Dias</span>
+        </div>
+      </div>
+
+      <!-- Barra de Progresso de Experiência (XP) -->
+      <div class="xp-bar-container">
+        <div class="xp-labels">
+          <span>Progresso Geral</span>
+          <span>{{ authService.xp() }} XP acumulados</span>
+        </div>
+        <div class="xp-track">
+          <!-- TODO: No MVP V2 usaremos a meta dinâmica do XpLevelConfig para o preenchimento em % -->
+          <div class="xp-fill" style="width: 45%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── GRADE DE MÉTRICAS DE RETENÇÃO ─── -->
+    <h3 class="section-title">Estatísticas de Evolução</h3>
+
+    <div class="stats-grid" *ngIf="!isLoadingStats(); else loadingState">
+      
+      <!-- Cartão: Categoria Dominante -->
+      <div class="stat-card dominant">
+        <div class="card-icon">
+          <ion-icon name="sparkles-outline"></ion-icon>
+        </div>
+        <div class="card-info">
+          <p class="label">Foco Dominante</p>
+          <h4>{{ stats()?.dominantCategory || 'Nenhuma atividade' }}</h4>
+        </div>
+      </div>
+
+      <!-- Cartão: Dias Ativos no Mês -->
+      <div class="stat-card active-days">
+        <div class="card-icon">
+          <ion-icon name="calendar-clear-outline"></ion-icon>
+        </div>
+        <div class="card-info">
+          <p class="label">Dias Ativos (Mês)</p>
+          <h4>{{ stats()?.activeDaysThisMonth || 0 }} dias</h4>
+        </div>
+      </div>
+
+      <!-- Cartão: XP Semanal -->
+      <div class="stat-card card-xp">
+        <div class="card-icon">
+          <ion-icon name="trending-up-outline"></ion-icon>
+        </div>
+        <div class="card-info">
+          <p class="label">XP Ganho na Semana</p>
+          <h4>+{{ stats()?.xpWeek || 0 }} XP</h4>
+        </div>
+      </div>
+
+      <!-- Cartão: Hora Mais Produtiva -->
+      <div class="stat-card production-hour">
+        <div class="card-icon">
+          <ion-icon name="time-outline"></ion-icon>
+        </div>
+        <div class="card-info">
+          <p class="label">Pico de Produtividade</p>
+          <h4>{{ stats()?.mostProductiveHour != null ? stats()?.mostProductiveHour + ':00' : 'Sem dados' }}</h4>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Feedback Visual de Carregamento -->
+    <ng-template #loadingState>
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Carregando dados do personagem...</p>
+      </div>
+    </ng-template>
+
+  </div>
+</ion-content>

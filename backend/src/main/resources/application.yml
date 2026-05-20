@@ -2,6 +2,20 @@ spring:
   application:
     name: lifequest
 
+  # ── Configuração de Conexão com o Banco de Dados (Adicionado) ──
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/lifequest}
+    username: ${DATABASE_USERNAME:lifequest_user}
+    password: ${DATABASE_PASSWORD:lifequest_pass}
+    driver-class-name: org.postgresql.Driver
+
+  # ── Configuração de Cache e Streaks com Redis (Adicionado) ──
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:lifequest_redis_pass}
+
   # ── JPA / Hibernate ──────────────────────────────────────────
   jpa:
     hibernate:
@@ -40,7 +54,7 @@ management:
 # ── JWT ──────────────────────────────────────────────────────
 lifequest:
   jwt:
-    secret: ${JWT_SECRET:default_dev_secret_change_in_prod_256bits}
+    secret: ${JWT_SECRET:default_dev_secret_change_in_prod_256bits_must_be_long}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}       # 24h
     refresh-expiration-ms: ${JWT_REFRESH_MS:604800000} # 7d
 
@@ -58,7 +72,7 @@ lifequest:
     minimum-completion-rate: 0.60   # 60% das tarefas do dia
     max-recovery-per-month: 2
 
-  # ── Logging ───────────────────────────────────────────────────
+# ── Logging ───────────────────────────────────────────────────
 logging:
   level:
     root: WARN

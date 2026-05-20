@@ -1,0 +1,54 @@
+<ion-content class="activities-content">
+  <div class="activities-container">
+    
+    <!-- Painel de Progresso Diário -->
+    <div class="daily-summary-card">
+      <div class="summary-info">
+        <h3>Missões de Hoje</h3>
+        <p>{{ completedToday().length }} concluidas</p>
+      </div>
+      <div class="summary-icon-box">
+        <ion-icon name="checkbox-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Feedback de Loading -->
+    <div class="loading-state" *ngIf="isLoading()">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Buscando quadro de missões...</p>
+    </div>
+
+    <!-- Renderização das Listas por Categoria -->
+    <div *ngIf="!isLoading()">
+      <div class="category-block" *ngFor="let cat of categories">
+        
+        <div class="category-header" [class]="cat.id">
+          <ion-icon [name]="cat.icon"></ion-icon>
+          <h4>{{ cat.label }}</h4>
+        </div>
+
+        <div class="activities-list">
+          <div class="activity-row" 
+               *ngFor="let act of getActivitiesByCategory(cat.id)"
+               [class.completed]="isCompleted(act.id)"
+               (click)="onComplete(act)">
+            
+            <div class="activity-details">
+              <h5>{{ act.title }}</h5>
+              <p *ngIf="act.description">{{ act.description }}</p>
+            </div>
+
+            <!-- Badge de XP à Direita -->
+            <div class="xp-badge" [class]="cat.id">
+              <span>+{{ act.xpReward }} XP</span>
+              <ion-icon [name]="isCompleted(act.id) ? 'checkmark-circle' : 'add-circle-outline'"></ion-icon>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,80 @@
+<ion-content class="auth-content">
+  <div class="auth-wrapper">
+    
+    <!-- Header da Marca -->
+    <div class="brand-container">
+      <div class="logo-shield">
+        <ion-icon name="shield-half-outline"></ion-icon>
+      </div>
+      <h1>Daily Level</h1>
+      <p>Transforme sua rotina em uma jornada épica</p>
+    </div>
+
+    <!-- Caixa do Formulário -->
+    <div class="auth-card">
+      <h2>{{ isLoginMode() ? 'Iniciar Sessão' : 'Criar Personagem' }}</h2>
+      
+      <form [formGroup].="authForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Feedback de Erro do Servidor -->
+        <div class="error-toast" *ngIf="errorMessage()">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <!-- Input: Username (Apenas no Cadastro) -->
+        <div class="input-group" *ngIf="!isLoginMode()">
+          <label>Username</label>
+          <div class="input-field">
+            <ion-icon name="person-outline"></ion-icon>
+            <input type="text" formControlName="username" placeholder="Seu username do RPG" />
+          </div>
+        </div>
+
+        <!-- Input: Email ou Username (Apenas no Login) -->
+        <div class="input-group" *ngIf="isLoginMode()">
+          <label>Email ou Username</label>
+          <div class="input-field">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="text" formControlName="emailOrUsername" placeholder="Digite seu email ou username" />
+          </div>
+        </div>
+
+        <!-- Input: Email (Apenas no Cadastro) -->
+        <div class="input-group" *ngIf="!isLoginMode()">
+          <label>E-mail</label>
+          <div class="input-field">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" formControlName="email" placeholder="seu@email.com" />
+          </div>
+        </div>
+
+        <!-- Input: Senha -->
+        <div class="input-group">
+          <label>Senha</label>
+          <div class="input-field">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" formControlName="password" placeholder="••••••••" />
+          </div>
+        </div>
+
+        <!-- Botão Principal de Submissão -->
+        <button type="submit" class="btn-primary" [disabled]="authForm.invalid || isLoading()">
+          <span *ngIf="!isLoading()">{{ isLoginMode() ? 'Entrar no Jogo' : 'Começar Aventura' }}</span>
+          <ion-spinner name="crescent" *ngIf="isLoading()"></ion-spinner>
+        </button>
+
+      </form>
+
+      <!-- Alternador de Modos -->
+      <div class="toggle-footer">
+        <p>
+          {{ isLoginMode() ? 'Novo por aqui?' : 'Já possui uma conta?' }}
+          <a (click)="toggleMode()">{{ isLoginMode() ? 'Criar uma conta' : 'Fazer login' }}</a>
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
