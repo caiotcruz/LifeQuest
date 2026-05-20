@@ -1,0 +1,58 @@
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background: var(--ion-background-color, #121212);
+}
+
+.main-content {
+  flex: 1; /* Ocupa todo o espaço restante da tela */
+  position: relative;
+  overflow: hidden; 
+}
+
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  
+  background: #1e1e1e; /* Fundo cinza escuro forçado */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  height: 70px; /* Mais altura = mais respiro e facilidade de clique */
+  padding-bottom: env(safe-area-inset-bottom); /* Respeita a barra de navegação de iPhones */
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  
+  /* Cor e tamanho dos botões inativos */
+  color: #a0a0a0; 
+  transition: all 0.2s ease;
+
+  ion-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  span {
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* Estilo aplicado automaticamente pelo Angular quando a URL bate com o link */
+  &.active {
+    color: #7C4DFF; /* Cor principal de destaque (Roxo) */
+    
+    ion-icon {
+      transform: translateY(-2px);
+    }
+  }
+}

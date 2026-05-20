@@ -78,21 +78,17 @@ export class ScheduleComponent implements OnInit {
 
   saveSchedule(): void {
     if (!this.newSchedule.activityId) {
-      this.toast.error('Selecione uma missão do catálogo.');
+      this.toast.error('Selecione uma atividade do catálogo.'); // Limpo
       return;
     }
-
     const payload = this.newSchedule as ScheduleRequest;
-    
     this.activityService.createSchedule(payload).subscribe({
       next: () => {
-        this.toast.badgeEarned('Hábito Agendado!'); // Reutilizando o visual verde/azul
+        this.toast.badgeEarned('Rotina Agendada!'); // Limpo
         this.loadSchedules();
         this.closeModal();
       },
-      error: () => {
-        this.toast.error('Falha ao agendar o hábito.');
-      }
+      error: () => this.toast.error('Falha ao agendar.')
     });
   }
 }

@@ -1,0 +1,10 @@
+<div class="xp-progress-container">
+  <div class="level-info">
+    <span class="level-label">Nível {{ level }}</span>
+    <span class="xp-label">{{ progressXp }} / {{ nextLevelXp }} XP</span>
+  </div>
+  <ion-progress-bar
+    [value]="progressPercent"
+    class="xp-bar">
+  </ion-progress-bar>
+</div>

@@ -10,9 +10,11 @@ export class ToastService {
       message: `⚡ +${xp} XP — ${activityName}`,
       duration: 2500,
       position: 'top',
-      color: 'warning',
-      cssClass: 'xp-toast'
+      cssClass: 'xp-toast',
+      icon: 'flash-outline',
+      animated: true
     });
+
     await toast.present();
   }
 
@@ -21,39 +23,63 @@ export class ToastService {
       message: `🎉 LEVEL UP! Você alcançou o Nível ${newLevel}!`,
       duration: 4000,
       position: 'middle',
-      color: 'success',
-      cssClass: 'levelup-toast'
+      cssClass: 'levelup-toast',
+      icon: 'trophy-outline',
+      animated: true
     });
+
     await toast.present();
   }
 
   async badgeEarned(badgeTitle: string): Promise<void> {
     const toast = await this.toastCtrl.create({
-      message: `🏆 Conquista Desbloqueada: ${badgeTitle}`,
+      message: `🏆 Nova conquista desbloqueada: ${badgeTitle}`,
       duration: 3500,
       position: 'top',
-      color: 'tertiary'
+      cssClass: 'badge-toast',
+      icon: 'ribbon-outline',
+      animated: true
     });
+
     await toast.present();
   }
 
   async streakUpdated(days: number): Promise<void> {
     const toast = await this.toastCtrl.create({
-      message: `🔥 Streak de ${days} ${days === 1 ? 'dia' : 'dias'} mantida!`,
-      duration: 2000,
+      message: `🔥 Sequência de ${days} ${days === 1 ? 'dia' : 'dias'} mantida!`,
+      duration: 2500,
       position: 'top',
-      color: 'danger'
+      cssClass: 'streak-toast',
+      icon: 'flame-outline',
+      animated: true
     });
+
+    await toast.present();
+  }
+
+  async success(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: `✅ ${message}`,
+      duration: 2500,
+      position: 'bottom',
+      cssClass: 'success-toast',
+      icon: 'checkmark-circle-outline',
+      animated: true
+    });
+
     await toast.present();
   }
 
   async error(message: string): Promise<void> {
     const toast = await this.toastCtrl.create({
       message: `❌ ${message}`,
-      duration: 3000,
+      duration: 3500,
       position: 'bottom',
-      color: 'danger'
+      cssClass: 'error-toast',
+      icon: 'alert-circle-outline',
+      animated: true
     });
+
     await toast.present();
   }
 }

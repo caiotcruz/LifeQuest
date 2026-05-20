@@ -23,7 +23,7 @@ export class AuthService {
   private readonly ME_API = `${environment.apiUrl}/me`; // 👈 Rota base para o UserController do Java
 
   constructor(private http: HttpClient, private router: Router) {
-    this.loadPersistedUser();
+    this.restoreSession();
   }
 
   // ── Rotas de Perfil (Profile) ───────────────────────────
@@ -89,10 +89,12 @@ export class AuthService {
     this._isLoading.set(false);
   }
 
-  private async loadPersistedUser(): Promise<void> {
+  public async restoreSession(): Promise<boolean> {
     const { value } = await Preferences.get({ key: 'user' });
     if (value) {
       this._currentUser.set(JSON.parse(value));
+      return true;
     }
+    return false;
   }
 }

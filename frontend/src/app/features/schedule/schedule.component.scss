@@ -1,16 +1,16 @@
 .schedule-content {
-  --background: var(--ion-background-color);
+  --background: var(--ion-background-color, #121212);
 
   .header-title {
     margin-bottom: 24px;
     h2 { font-weight: 800; color: #fff; margin: 0 0 4px; }
-    p { color: var(--ion-color-medium); margin: 0; font-size: 14px; }
+    p { color: #a0a0a0; margin: 0; font-size: 14px; }
   }
 
-  .empty-state {
+  .loading-state, .empty-state {
     text-align: center;
     padding: 64px 0;
-    color: var(--ion-color-medium);
+    color: #a0a0a0;
     
     ion-icon { font-size: 64px; opacity: 0.5; margin-bottom: 16px; }
   }
@@ -19,51 +19,59 @@
     background: transparent;
     
     .schedule-card {
-      --background: var(--ion-card-background);
+      --background: #1e1e1e;
       --border-radius: 12px;
       --padding-start: 16px;
       margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
       
-      h3 { font-weight: 700; color: #fff; }
+      h3 { font-weight: 700; color: #fff; font-size: 15px; margin-bottom: 6px; }
+      p { color: #a0a0a0; font-size: 13px; }
       
       .recurrence-badge {
         background: rgba(124, 77, 255, 0.2);
-        color: var(--ion-color-primary);
+        color: #b39ddb; // Roxo claro
         padding: 2px 8px;
         border-radius: 8px;
         font-size: 10px;
         font-weight: 700;
+        margin-left: 6px;
       }
     }
   }
 
-  ion-fab-button {
-    --background: var(--ion-color-primary);
+  .custom-fab {
+    margin-bottom: 20px; // Não ficar escondido atrás das tabs
   }
 }
 
-// Estilos específicos para dentro do Modal
+/* Modal e Inputs Customizados para garantir contraste no Dark Mode */
+.modal-header {
+  --background: #121212;
+  --color: #fff;
+}
+
 .modal-content {
-  --background: var(--ion-background-color);
+  --background: #121212;
   
   .form-group {
     margin-bottom: 24px;
     
     .field-label {
       display: block;
-      color: var(--ion-color-medium);
+      color: #a0a0a0;
       font-size: 12px;
       font-weight: 700;
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
-    ion-select, ion-input {
-      --background: var(--ion-card-background);
+    .custom-input {
+      --background: #1e1e1e;
+      --color: #fff;
       --padding-start: 16px;
       border-radius: 8px;
-      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
     }
   }
 }

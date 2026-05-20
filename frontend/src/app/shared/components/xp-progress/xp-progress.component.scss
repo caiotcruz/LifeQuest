@@ -1,0 +1,31 @@
+.xp-progress-container {
+  padding: 8px 0;
+  width: 100%;
+}
+
+.level-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.level-label {
+  font-weight: 800;
+  color: #ffc409; /* Amarelo vibrante do Ionic */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.xp-label {
+  color: #ffffff; /* Forçando branco para garantir leitura no fundo escuro */
+}
+
+.xp-bar {
+  height: 12px;
+  border-radius: 6px;
+  --background: rgba(255, 255, 255, 0.1); /* Fundo sutil da barra vazia */
+  --progress-background: #ffc409; /* Cor do preenchimento */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}

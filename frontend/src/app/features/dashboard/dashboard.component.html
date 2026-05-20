@@ -4,8 +4,10 @@
     <div class="character-hud">
       <div class="hud-header">
         <div class="user-info">
-          <h2>{{ currentUser()?.username || 'Viajante' }}</h2>
-          <span class="class-title">Herói da Guilda</span>
+          <!-- 1. Viajante virou Usuário -->
+          <h2>{{ currentUser()?.username || 'Usuário' }}</h2>
+          <!-- 2. Herói da Guilda virou Evolução Contínua -->
+          <span class="class-title">Evolução Contínua</span>
         </div>
         
         <div class="streak-badge" [class.active]="(currentUser()?.currentStreak || 0) > 0">
@@ -30,53 +32,47 @@
     <h3 class="section-title">Estatísticas de Evolução</h3>
 
     <div class="stats-grid" *ngIf="!isLoadingStats(); else loadingState">
-      
+      <!-- (Cards de estatísticas mantidos iguais...) -->
       <div class="stat-card dominant">
-        <div class="card-icon">
-          <ion-icon name="sparkles-outline"></ion-icon>
-        </div>
+        <div class="card-icon"><ion-icon name="sparkles-outline"></ion-icon></div>
         <div class="card-info">
           <p class="label">Foco Dominante</p>
           <h4>{{ stats()?.dominantCategory || 'Nenhuma atividade' }}</h4>
         </div>
       </div>
-
       <div class="stat-card active-days">
-        <div class="card-icon">
-          <ion-icon name="calendar-clear-outline"></ion-icon>
-        </div>
+        <div class="card-icon"><ion-icon name="calendar-clear-outline"></ion-icon></div>
         <div class="card-info">
           <p class="label">Dias Ativos (Mês)</p>
           <h4>{{ stats()?.activeDaysThisMonth || 0 }} dias</h4>
         </div>
       </div>
-
       <div class="stat-card card-xp">
-        <div class="card-icon">
-          <ion-icon name="trending-up-outline"></ion-icon>
-        </div>
+        <div class="card-icon"><ion-icon name="trending-up-outline"></ion-icon></div>
         <div class="card-info">
           <p class="label">XP Ganho na Semana</p>
           <h4>+{{ stats()?.xpWeek || 0 }} XP</h4>
         </div>
       </div>
-
       <div class="stat-card production-hour">
-        <div class="card-icon">
-          <ion-icon name="time-outline"></ion-icon>
-        </div>
+        <div class="card-icon"><ion-icon name="time-outline"></ion-icon></div>
         <div class="card-info">
           <p class="label">Pico de Produtividade</p>
           <h4>{{ stats()?.mostProductiveHour != null ? stats()?.mostProductiveHour + ':00' : 'Sem dados' }}</h4>
         </div>
       </div>
+    </div>
 
+    <h3 class="section-title ion-margin-top">Produtividade Semanal</h3>
+    <div class="chart-container" style="position: relative; height: 250px; width: 100%; background: var(--ion-card-background); border-radius: 12px; padding: 16px;">
+      <canvas #xpChartCanvas></canvas>
     </div>
 
     <ng-template #loadingState>
       <div class="loading-container">
         <ion-spinner name="crescent"></ion-spinner>
-        <p>Carregando dados do personagem...</p>
+        <!-- 3. Dados do personagem virou "suas estatísticas" -->
+        <p>Carregando suas estatísticas...</p>
       </div>
     </ng-template>
 

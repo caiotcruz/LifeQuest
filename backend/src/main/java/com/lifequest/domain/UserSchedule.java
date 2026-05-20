@@ -1,5 +1,7 @@
 package com.lifequest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lifequest.enums.RecurrenceType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,12 +19,14 @@ import java.util.Set;
         @Index(name = "idx_us_user_active", columnList = "user_id, is_active")
     })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_us_user"))

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { shieldHalfOutline, personOutline, mailOutline, lockClosedOutline, alertCircleOutline } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -17,7 +19,6 @@ export class AuthComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Estados reativos da Tela (Angular Signals)
   isLoginMode = signal(true);
   errorMessage = signal<string | null>(null);
   isLoading = this.authService.isLoading;
@@ -25,6 +26,9 @@ export class AuthComponent {
   authForm: FormGroup;
 
   constructor() {
+    // 1. Registra os ícones para limpar os erros de URL e Warnings do Ionicons no console
+    addIcons({ shieldHalfOutline, personOutline, mailOutline, lockClosedOutline, alertCircleOutline });
+
     this.authForm = this.fb.group({
       username: ['', [Validators.minLength(3), Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9_]+$')]],
       emailOrUsername: ['', [Validators.required]],
@@ -73,11 +77,12 @@ export class AuthComponent {
     this.errorMessage.set(null);
 
     if (this.isLoginMode()) {
+      // Retornamos para a chave correta da sua interface: emailOrUsername
       this.authService.login({
         emailOrUsername: this.authForm.value.emailOrUsername,
         password: this.authForm.value.password
       }).subscribe({
-        next: () => this.router.navigate(['/tabs/dashboard']), // 👈 Ajustado para a malha de abas
+        next: () => this.router.navigate(['/dashboard']), // Mude para '/tabs/dashboard' se a rota de abas estiver ativa
         error: (err) => this.errorMessage.set(err.error?.message || 'Credenciais inválidas.')
       });
     } else {
@@ -86,7 +91,7 @@ export class AuthComponent {
         email: this.authForm.value.email,
         password: this.authForm.value.password
       }).subscribe({
-        next: () => this.router.navigate(['/tabs/dashboard']), // 👈 Ajustado para a malha de abas
+        next: () => this.router.navigate(['/dashboard']), 
         error: (err) => this.errorMessage.set(err.error?.message || 'Falha ao registrar conta.')
       });
     }

@@ -39,7 +39,6 @@ export class ProfileComponent implements OnInit {
 
   loadProfileData(): void {
     this.isLoading.set(true);
-    // Assumindo que criaremos este método no auth.service ou user.service em seguida
     this.authService.getProfile().subscribe({
       next: (data: UserProfileResponse) => {
         this.profileData.set(data);
@@ -47,7 +46,7 @@ export class ProfileComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.toast.error('Erro ao carregar dados do perfil da Guilda.');
+        this.toast.error('Erro ao carregar dados do perfil.'); // Limpo
         this.isLoading.set(false);
       }
     });
@@ -63,7 +62,7 @@ export class ProfileComponent implements OnInit {
 
   saveProfile(): void {
     if (this.editModel.username.length < 3) {
-      this.toast.error('O nome do herói deve ter no mínimo 3 caracteres.');
+      this.toast.error('O nome de usuário deve ter no mínimo 3 caracteres.'); 
       return;
     }
 
